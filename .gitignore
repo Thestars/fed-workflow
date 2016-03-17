@@ -1,6 +1,7 @@
 # 忽略文件
 test/node_modules
 src/node_modules
-./node_modules
+node_modules
+public
 src/bower_modules
 src/.sass-cache

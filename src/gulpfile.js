@@ -10,24 +10,25 @@ var useref = require('gulp-useref');
 
 var paths = {
     html: [
-        "./*.html",
+        "*.html",
     ],
     images: [
-        "./images/*"
+        "images/*"
     ],
     js: [
-        "./js/**/*",
+        "scripts/**/*.js",
     ],
     sass: [
-        "/sass/*.scss",
+        "sass/**/*.scss",
     ],
     font: [
-        "./fonts/*.ttf"
+        "fonts/*.ttf"
     ]
 };
 
-var output = "../dist";
+var output = "../build"; // 文件构建输出地址
 var dist = "../test/public";
+var release = "/release"; // release目录
 
 /**
  *  Task 
@@ -54,12 +55,12 @@ gulp.task('font', function() {
 });
 
 gulp.task('css', function() {
-    exec("sass --watch ./sass:"+output+"/css", function(err, stdout, stderr) {
+    exec("sass --watch ./styles:"+output+"/css", function(err, stdout, stderr) {
         if (err) console.log("gulp.sass error:" + err);
     });
 });
 
-// =============压缩合并dist资源到test============== //
+// =============压缩合并build资源============== //
 gulp.task('release', function() {
     gulp.src(output+"/*.html")
         .pipe(useref())
@@ -67,29 +68,19 @@ gulp.task('release', function() {
         .pipe(gulpif('*.js', uglify({
             mangle: false
         })))
-        .pipe(gulp.dest(dist));
-
-    gulp.src(paths.font)
-        .pipe(gulp.dest(dist+"/css/fonts"));
-
-    gulp.src(paths.images)
-        .pipe(imagemin({
-            progressive: true,
-            svgoPlugins: [{removeViewBox: false}],
-            use: [pngquant()]
-        }))
-        .pipe(gulp.dest(dist+"/images"));
+        .pipe(gulp.dest(release));
 });
 
-// =============拷贝dist资源到test============== //
-gulp.task('test', function() {
-    gulp.src("../dist/**/*")
-    .pipe(gulp.dest("../test/public"));
+// =============拷贝到server public目录，并运行server============== //
+gulp.task('server', function() {
+    gulp.src("../build/**/*")
+    .pipe(gulp.dest("../public"));
 });
 
 // 默认构建
-gulp.task('default', ['images', 'css', 'html', 'js', 'font', 'test'], function() {
-    gulp.watch(['sass/**/*.scss'], ['css']);
+gulp.task('default', ['images', 'css', 'html', 'js', 'font'], function() {
+    gulp.watch(paths.sass, ['css']);
     gulp.watch(paths.html, ['html']);
-    gulp.watch(['js/**/*.js'], ['js']);
+    gulp.watch(paths.images, ['images']);
+    gulp.watch(paths.js, ['js']);
 });
