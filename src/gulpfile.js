@@ -7,13 +7,15 @@ var pngquant = require('imagemin-pngquant');
 var gulpif = require('gulp-if');
 var uglify = require('gulp-uglify');
 var useref = require('gulp-useref');
+var sass = require('gulp-sass');
+var clean = require('gulp-clean');
 
 var paths = {
     html: [
         "*.html",
     ],
     images: [
-        "images/*"
+        "images/*",
     ],
     js: [
         "scripts/**/*.js",
@@ -26,9 +28,8 @@ var paths = {
     ]
 };
 
-var output = "../build"; // 文件构建输出地址
-var dist = "../test/public";
-var release = "/release"; // release目录
+var output = "../.temp"; // 文件构建输出地址
+var dist = "../dist"; // dist目录
 
 /**
  *  Task 
@@ -54,32 +55,55 @@ gulp.task('font', function() {
         .pipe(gulp.dest(output + "/css/fonts"));
 });
 
-gulp.task('css', function() {
-    exec("sass --watch ./styles:"+output+"/css", function(err, stdout, stderr) {
-        if (err) console.log("gulp.sass error:" + err);
-    });
+gulp.task('sass', function() {
+   return gulp.src(paths.sass)
+    .pipe(sass().on('error', sass.logError))
+    .pipe(gulp.dest(output + '/css'));
 });
 
 // =============压缩合并build资源============== //
-gulp.task('release', function() {
+gulp.task('dist', ['run.dist'], function() {
+
+    gulp.src(dist + "/*")
+        .pipe(clean({force: true}));
+
     gulp.src(output+"/*.html")
-        .pipe(useref())
         .pipe(gulpif('*.css', minifyCss()))
         .pipe(gulpif('*.js', uglify({
             mangle: false
         })))
-        .pipe(gulp.dest(release));
+        .pipe(useref())
+        .pipe(gulp.dest(dist));
+
+    gulp.src(paths.font)
+        .pipe(gulp.dest(dist+"/css/fonts"));
+
+    gulp.src(paths.images)
+        .pipe(imagemin({
+            progressive: true,
+            svgoPlugins: [{removeViewBox: false}],
+            use: [pngquant()]
+        }))
+        .pipe(gulp.dest(dist+"/images"));
 });
 
-// =============拷贝到server public目录，并运行server============== //
-gulp.task('server', function() {
-    gulp.src("../build/**/*")
-    .pipe(gulp.dest("../public"));
+gulp.task('run.dist', function() {
+    exec("node ../app.js /dist", function(err, stdout, stderr) {
+        console.log(stdout);
+        if (err) console.log("start server error:" + err);
+    });
+});
+
+gulp.task('run.build', function() {
+    exec("node ../app.js /.temp", function(err, stdout, stderr) {
+        console.log(stdout);
+        if (err) console.log("start server error:" + err);
+    });
 });
 
 // 默认构建
-gulp.task('default', ['images', 'css', 'html', 'js', 'font'], function() {
-    gulp.watch(paths.sass, ['css']);
+gulp.task('default', ['images', 'sass', 'html', 'js', 'font', 'run.build'], function() {
+    gulp.watch(paths.sass, ['sass']);
     gulp.watch(paths.html, ['html']);
     gulp.watch(paths.images, ['images']);
     gulp.watch(paths.js, ['js']);

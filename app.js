@@ -5,8 +5,11 @@ var bodyParser = require('body-parser');
 var session = require('express-session');
 var Http = require('./HttpRequestUtils');
 
+var dir = (process.argv)[2] || '/.temp';
+console.log("process>>" + (process.argv)[2]);
 // 静态文件目录
-app.use(express.static('./public'));
+console.log("dirname>>" + __dirname + dir);
+app.use(express.static(__dirname + dir));
 
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({
