@@ -9,7 +9,6 @@ var uglify = require('gulp-uglify');
 var useref = require('gulp-useref');
 var sass = require('gulp-sass');
 var clean = require('gulp-clean');
-var livereload = require('gulp-livereload'); // Auto refresh browser.
 
 var paths = {
     html: [
@@ -105,7 +104,6 @@ gulp.task('run.build', function() {
 
 // 默认构建
 gulp.task('default', ['images', 'sass', 'html', 'js', 'font', 'run.build'], function() {
-    livereload.listen({ start: true });
     gulp.watch(paths.sass, ['sass']);
     gulp.watch(paths.html, ['html']);
     gulp.watch(paths.images, ['images']);
