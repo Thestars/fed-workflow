@@ -1,5 +1,14 @@
+@charset "UTF-8";
 /**
  * Main style sheet.
  */
+/**
+ * [px2Rem px转换为Rem单位]
+ * @param  {[type]} $px [像素]
+ * @return {[type]}     [rem单位值]
+ */
 body {
   font-size: 12px; }
+
+h1 {
+  color: red; }

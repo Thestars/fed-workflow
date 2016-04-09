@@ -1,3 +1,12 @@
 // 常量
 
-$font: 12px;
+$rootFont: 12px; // 根元素字体
+
+/**
+ * [px2Rem px转换为Rem单位]
+ * @param  {[type]} $px [像素]
+ * @return {[type]}     [rem单位值]
+ */
+@function px2Rem($px) { 
+  @return $px / $rootFont + rem;
+}

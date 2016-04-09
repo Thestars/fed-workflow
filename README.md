@@ -6,27 +6,29 @@
 | - fed-workflow
 	| - build 构建目录
 	| - src  开发源码
-		| - bower_components 前端依赖的脚本
 		| - fonts 字体文件
 		| - html_modules html模块
 		| - images 图片模块
 		| - script js文件
-		| - node_modules nodejs模块
 		| - sass scss文件
 		| - templates 模板文件
 	| - public 静态公共文件
-	| - node_modules nodejs模块
+	| - node_modules js依赖模块脚本
 	| - app.js 服务器端测试主程序模块
-| - README.md 项目说明文件
+	| - config.js 服务器端测试Api地址配置
+	| - gulpfile.js gulp配置文件
+	| - bower.json bower配置文件
+	| - README.md 项目说明文件
 
 ```
 # Init
 
-* 切换到scr目录
-* 运行`npm install`初始化gulp插件
-* 运行`bower install` 初始化前端依赖库
+* 运行`npm install`初始化Node依赖库
+* 运行`bower install` 初始化前端库
 
 #运行
 
-* 在`src`目录下运行`gulp`命令，自动构建到`build` 目录
-* 运行`gulp server` 可将build目录拷贝到public下，通过本地ip或者域名访问
+* 在`根`目录下运行`gulp`命令，打开浏览器通过：127.0.0.1:3000访问网页
+
+* 在`根`目录下运行`gulp dist`命令，打开浏览器通过：127.0.0.1:3000访问`压缩合并构建版本`网页
+
